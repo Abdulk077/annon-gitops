@@ -1,0 +1,25 @@
+replicaCount: 2
+
+image:
+  repository: abdulk07/anon-review-server
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 3000
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+env:
+  NODE_ENV: production
+  PORT: "3000"
+secret:
+  databaseUrl: ""
+  jwtSecret: ""
