@@ -13,6 +13,8 @@ spec:
       labels:
         app: postgres
     spec:
+      nodeSelector:
+        role: database
       containers:
         - name: postgres
           image: postgres:15-alpine
