@@ -24,6 +24,8 @@ spec:
                 secretKeyRef:
                   name: pgbouncer-secret
                   key: DATABASE_URL
+            - name: LISTEN_PORT
+              value: "6432"
             - name: POOL_MODE
               value: "transaction"
             - name: DEFAULT_POOL_SIZE
