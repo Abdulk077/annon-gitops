@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: production
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: 1
   selector:
@@ -20,6 +20,9 @@ spec:
           image: postgres:15-alpine
           ports:
             - containerPort: 5432
+          env:
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: "md5"
           envFrom:
             - secretRef:
                 name: postgres-secret
