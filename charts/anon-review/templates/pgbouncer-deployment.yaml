@@ -26,6 +26,8 @@ spec:
                   key: DATABASE_URL
             - name: LISTEN_PORT
               value: "6432"
+            - name: AUTH_TYPE
+              value: "trust"
             - name: POOL_MODE
               value: "transaction"
             - name: DEFAULT_POOL_SIZE
