@@ -16,7 +16,11 @@ resources:
   limits:
     cpu: 500m
     memory: 512Mi
+postgres:
+  port: 5432
 
+pgbouncer:
+  port: 6432
 env:
   NODE_ENV: production
   PORT: "3000"
