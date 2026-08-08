@@ -13,8 +13,18 @@ spec:
       labels:
         app: {{ .Release.Name }}-server
     spec:
+
       nodeSelector:
         role: backend
+      initContainers:
+        - name: prisma-migrate
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          command: ["sh", "-c", "bunx prisma generate && bunx prisma migrate deploy"]
+          envFrom:
+            - secretRef:
+                name: annon-review-secret
+          nodeSelector:
+            role: backend
       containers:
         - name: server
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
