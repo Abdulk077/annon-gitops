@@ -7,6 +7,8 @@ spec:
   parentRefs:
     - name: kong-gateway
       namespace: kong
+  hostnames:
+    - "localhost"
   rules:
     - matches:
         - path:
