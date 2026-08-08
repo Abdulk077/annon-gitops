@@ -1,20 +1,19 @@
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: annon-review-route
+  name: annon-review-ingress
   namespace: production
+  annotations:
+    konghq.com/strip-path: "false"
 spec:
-  parentRefs:
-    - name: kong-gateway
-      namespace: kong
-  hostnames:
-    - "localhost"
+  ingressClassName: kong
   rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /api
-      backendRefs:
-        - name: annon-review-server
-          namespace: production
-          port: 3000
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: annon-review-server
+                port:
+                  number: 3000
