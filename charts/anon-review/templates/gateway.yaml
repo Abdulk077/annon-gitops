@@ -4,6 +4,8 @@ metadata:
   name: kong
 spec:
   controllerName: konghq.com/kic-gateway-controller
+
+
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
