@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgbouncer-replica
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgbouncer-replica
+  template:
+    metadata:
+      labels:
+        app: pgbouncer-replica
+    spec:
+      containers:
+        - name: pgbouncer-replica
+          image: edoburu/pgbouncer:latest
+          ports:
+            - containerPort: 6432
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: pgbouncer-replica-secret
+                  key: DATABASE_URL
+            - name: LISTEN_PORT
+              value: "6432"
+            - name: AUTH_TYPE
+              value: "md5"
+            - name: POOL_MODE
+              value: "transaction"
+            - name: DEFAULT_POOL_SIZE
+              value: "10"
+            - name: MAX_CLIENT_CONN
+              value: "500"
