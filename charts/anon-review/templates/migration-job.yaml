@@ -9,20 +9,16 @@ metadata:
 spec:
   template:
     spec:
+      restartPolicy: OnFailure  # Automatically retries
       nodeSelector:
         role: backend
-      initContainers:
-        - name: wait-for-postgres
-          image: busybox:1.28
-          command:
-            - sh
-            - c
-            - "until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done"
       containers:
         - name: migrate
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          command: ["sh", "-c", "bunx prisma migrate deploy --schema=/app/prisma/schema.prisma"]
+          command: ["sh", "-c", "pg_isready -h postgres-service -p 5432 -U user_anon && bunx prisma migrate deploy --schema=/app/prisma/schema.prisma"]
           envFrom:
             - secretRef:
                 name: annon-review-secret
-      restartPolicy: Never
+          env:
+            - name: PGCONNECT_TIMEOUT
+              value: "30"
