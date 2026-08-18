@@ -5,17 +5,34 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     argocd.argoproj.io/hook: PreSync
-    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookFailed
+    argocd.argoproj.io/hook-weight: "0"
 spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 300
   template:
     spec:
-      restartPolicy: never  # Automatically retries
+      restartPolicy: Never
       nodeSelector:
         role: backend
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:16-alpine
+          envFrom:
+            - secretRef:
+                name: app-db-secret
+          command:
+            - sh
+            - -c
+            - |
+              until pg_isready -h "$PGHOST" -p "${PGPORT:-5432}" -U "$PGUSER"; do
+                echo "waiting for postgres..."
+                sleep 2
+              done
       containers:
         - name: migrate
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          command: ["sh", "-c", bunx prisma migrate deploy --schema=/app/prisma/schema.prisma"]
+          command: ["sh", "-c", "bunx prisma migrate deploy --schema=/app/prisma/schema.prisma"]
           envFrom:
             - secretRef:
                 name: annon-review-secret
