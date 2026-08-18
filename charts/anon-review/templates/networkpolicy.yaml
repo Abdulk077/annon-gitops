@@ -16,9 +16,6 @@ spec:
               app: pgbouncer
         - podSelector:
             matchLabels:
-              job-name: prisma-migrate
-        - podSelector:
-            matchLabels:
             app: pgbouncer-replica
 ---
 apiVersion: networking.k8s.io/v1
