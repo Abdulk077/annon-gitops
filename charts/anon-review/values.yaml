@@ -17,8 +17,11 @@ resources:
     cpu: 500m
     memory: 512Mi
 postgres:
-  port: 5432
-
+  primary:
+    port: 5432
+  replica:
+    port: 5432
+    replicas: 1
 pgbouncer:
   port: 6432
 env:
