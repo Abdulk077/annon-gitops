@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: {{ .Release.Name }}-server
   namespace: {{ .Release.Namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -13,7 +16,6 @@ spec:
       labels:
         app: {{ .Release.Name }}-server
     spec:
-
       nodeSelector:
         role: backend
       containers:
