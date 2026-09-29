@@ -2,7 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: postgres-access-policy
-  namespace: {{ .Release.Namespace }}
+  namespace: "{{ .Release.Namespace }}"
+
 spec:
   podSelector:
     matchLabels:

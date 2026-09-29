@@ -2,12 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres-replica
-  namespace: { { .Release.Namespace } }
+  namespace: "{{ .Release.Namespace }}"
 spec:
-  replicas: { { .Values.postgres.replica.replicas } }
+  replicas: {{ .Values.postgres.replica.replicas }}
+  strategy:
+    type: Recreate
   selector:
-    strategy:
-      type: Recreate
     matchLabels:
       app: postgres-replica
   template:
