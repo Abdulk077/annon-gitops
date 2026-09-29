@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: pgbouncer-replica
-          image: pgbouncer/pgbouncer:latest
+          image: edoburu/pgbouncer:latest
           ports:
             - containerPort: 6432
           readinessProbe:
