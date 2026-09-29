@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: pgbouncer/pgbouncer:v1.21.0
+          image: pgbouncer/pgbouncer:latest
           ports:
             - containerPort: 6432
           readinessProbe:
