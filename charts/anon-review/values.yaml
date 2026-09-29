@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: abdulk07/anon-review-server
+  repository: abdulk07/annon-review-server
   tag: latest
   pullPolicy: Always
 
