@@ -1,31 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-server
+  name: "{{ .Release.Name }}-server"
   namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-server
+      app: "{{ .Release.Name }}-server"
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-server
+        app: "{{ .Release.Name }}-server"
     spec:
       nodeSelector:
         role: backend
       containers:
         - name: server
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.port }}
           envFrom:
             - configMapRef:
-                name: {{ .Release.Name }}-config
+                name: "{{ .Release.Name }}-config"
             - secretRef:
-                name: {{ .Release.Name }}-secret
+                name: "{{ .Release.Name }}-secret"
           resources:
             requests:
               cpu: {{ .Values.resources.requests.cpu }}

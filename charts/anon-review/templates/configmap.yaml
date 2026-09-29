@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-config
+  name: "{{ .Release.Name }}-config"
   namespace: {{ .Release.Namespace }}
 data:
-  NODE_ENV: {{ .Values.env.NODE_ENV | quote}}
+  NODE_ENV: {{ .Values.env.NODE_ENV | quote }}
   PORT: {{ .Values.env.PORT | quote }}

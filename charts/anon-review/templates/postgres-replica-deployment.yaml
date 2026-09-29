@@ -2,10 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres-replica
-  namespace: {{ .Release.Namespace }}
+  namespace: { { .Release.Namespace } }
 spec:
-  replicas: 1
+  replicas: { { .Values.postgres.replica.replicas } }
   selector:
+    strategy:
+      type: Recreate
     matchLabels:
       app: postgres-replica
   template:
@@ -22,14 +24,18 @@ spec:
             - sh
             - -c
             - |
-              until pg_isready -h postgres-service -U user_anon; do
-                echo "Waiting for primary..."; sleep 2;
-              done
-              PGPASSWORD=$POSTGRES_REPLICATION_PASSWORD pg_basebackup \
-                -h postgres-service \
-                -U replicator \
-                -D /var/lib/postgresql/data \
-                -Fp -Xs -R -P
+              # Only clone from primary if the persistent storage is empty
+              # Prevents CrashLoopBackOff when the replica restarts
+              if [ ! -d "/var/lib/postgresql/data/pgdata" ]; then
+                until pg_isready -h postgres-service -U user_anon; do
+                  echo "Waiting for primary..."; sleep 2;
+                done
+                PGPASSWORD=$POSTGRES_REPLICATION_PASSWORD pg_basebackup \
+                  -h postgres-service \
+                  -U replicator \
+                  -D /var/lib/postgresql/data/pgdata \
+                  -Fp -Xs -R -P
+              fi
           envFrom:
             - secretRef:
                 name: postgres-secret
@@ -42,6 +48,8 @@ spec:
           ports:
             - containerPort: 5432
           env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
             - name: POSTGRES_HOST_AUTH_METHOD
               value: "md5"
           envFrom:

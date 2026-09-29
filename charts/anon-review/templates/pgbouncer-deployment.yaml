@@ -15,9 +15,19 @@ spec:
     spec:
       containers:
         - name: pgbouncer
-          image: edoburu/pgbouncer:latest
+          image: edoburu/pgbouncer
           ports:
             - containerPort: 6432
+          readinessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 10
+            periodSeconds: 10
           env:
             - name: DATABASE_URL
               valueFrom:

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pgbouncer-replica
-  namespace: {{ .Release.Namespace }}
+  namespace: { { .Release.Namespace } }
 spec:
   replicas: 1
   selector:
@@ -15,9 +15,19 @@ spec:
     spec:
       containers:
         - name: pgbouncer-replica
-          image: edoburu/pgbouncer:latest
+          image: edoburu/pgbouncer:1.21.0
           ports:
             - containerPort: 6432
+          readinessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: 6432
+            initialDelaySeconds: 10
+            periodSeconds: 10
           env:
             - name: DATABASE_URL
               valueFrom:

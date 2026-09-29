@@ -16,10 +16,7 @@ spec:
               app: pgbouncer
         - podSelector:
             matchLabels:
-              app: prisma-migrate
-        - podSelector:
-            matchLabels:
-            app: pgbouncer-replica
+              app: postgres-replica
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -36,7 +33,7 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app: annon-review-server
+              app: "{{ .Release.Name }}-server"
       ports:
         - protocol: TCP
           port: {{ .Values.pgbouncer.port }}
