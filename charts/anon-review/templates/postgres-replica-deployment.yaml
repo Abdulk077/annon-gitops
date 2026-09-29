@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: postgres-replica
   namespace: {{ .Release.Namespace }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "9"
 spec:
   replicas: 1
   selector:
