@@ -4,5 +4,5 @@ metadata:
   name: {{ .Release.Name }}-config
   namespace: {{ .Release.Namespace }}
 data:
-  NODE_ENV: {{ .Values.env.NODE_ENV | qute}}
+  NODE_ENV: {{ .Values.env.NODE_ENV | quote}}
   PORT: {{ .Values.env.PORT | quote }}
