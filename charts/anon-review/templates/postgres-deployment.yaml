@@ -28,6 +28,7 @@ spec:
                   - -c
                   - |
                     until pg_isready -U $POSTGRES_USER -d $POSTGRES_DB; do sleep 1; done
+                    psql -U $POSTGRES_USER -d $POSTGRES_DB -c "CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD '$POSTGRES_REPLICATION_PASSWORD';" 2>/dev/null || true
                     echo "host replication replicator 0.0.0.0/0 md5" >> /var/lib/postgresql/data/pg_hba.conf
                     psql -U $POSTGRES_USER -d $POSTGRES_DB -c "SELECT pg_reload_conf();"
           ports:
