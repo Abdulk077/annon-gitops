@@ -20,6 +20,19 @@ spec:
       containers:
         - name: postgres
           image: postgres:15-alpine
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - |
+                    until pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"; do sleep 2; done
+                    if ! grep -q "host replication replicator" /var/lib/postgresql/data/pgdata/pg_hba.conf; then
+                      echo "host replication replicator 0.0.0.0/0 md5" >> /var/lib/postgresql/data/pgdata/pg_hba.conf
+                      psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT pg_reload_conf();"
+                    fi
+                    psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD '${POSTGRES_REPLICATION_PASSWORD:-secretpassword}';" || true
           ports:
             - containerPort: 5432
           env:
