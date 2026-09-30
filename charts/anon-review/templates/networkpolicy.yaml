@@ -17,7 +17,7 @@ spec:
               app: pgbouncer
         - podSelector:
             matchLabels:
-              app: pgbouncer-replica
+              app: postgres-replica
         - podSelector:
             matchLabels:
               app: "{{ .Release.Name }}-server"
