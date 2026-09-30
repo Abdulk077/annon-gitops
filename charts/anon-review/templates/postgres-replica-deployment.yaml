@@ -25,16 +25,21 @@ spec:
             - -c
             - |
               # Only clone from primary if the persistent storage is empty
-              # Prevents CrashLoopBackOff when the replica restarts
               if [ ! -d "/var/lib/postgresql/data/pgdata" ]; then
-                until pg_isready -h postgres-service -U user_anon; do
-                  echo "Waiting for primary..."; sleep 2;
+                until pg_isready -h postgres-service -U "$POSTGRES_USER"; do
+                  echo "Waiting for primary database to accept connections..."
+                  sleep 2
                 done
-                PGPASSWORD=$POSTGRES_REPLICATION_PASSWORD pg_basebackup \
+                
+                # Retry pg_basebackup until the postStart user provisioning completes
+                until PGPASSWORD="$POSTGRES_REPLICATION_PASSWORD" pg_basebackup \
                   -h postgres-service \
                   -U replicator \
                   -D /var/lib/postgresql/data/pgdata \
-                  -Fp -Xs -R -P
+                  -Fp -Xs -R -P; do
+                  echo "Replication user is still initializing on primary. Retrying in 3 seconds..."
+                  sleep 3
+                done
               fi
           envFrom:
             - secretRef:
